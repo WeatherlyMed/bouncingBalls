@@ -19,6 +19,7 @@ ball_radius = 20
 ball_x = width // 2
 ball_y = ball_radius
 ball_color = BLACK
+ball_speed_x = 0
 ball_speed_y = 0
 gravity = 0.5
 
@@ -31,6 +32,16 @@ circle_color = WHITE
 # Clock object to control frame rate
 clock = pygame.time.Clock()
 
+# Universal bounce function
+def bounce(obj_x, obj_y, obj_radius, surface_x, surface_y, surface_radius, speed_x, speed_y):
+    dx = obj_x - surface_x
+    dy = obj_y - surface_y
+    distance = math.sqrt(dx ** 2 + dy ** 2)
+    if distance < surface_radius - obj_radius:
+        speed_y = -speed_y  # Bounce off the surface
+        speed_x = -speed_x  # Bounce off the surface
+    return speed_x, speed_y
+
 # Main loop
 running = True
 while running:
@@ -41,18 +52,19 @@ while running:
     # Update ball position
     ball_speed_y += gravity
     ball_y += ball_speed_y
+    ball_x += ball_speed_x
 
     # Check if the ball hits the ground
     if ball_y >= height - ball_radius:
         ball_y = height - ball_radius
-        ball_speed_y = -ball_speed_y * 0.7  # Simulate bounce with energy loss
+        ball_speed_y, ball_speed_x = bounce(ball_x, ball_y, ball_radius, ball_x, height - ball_radius, ball_radius, ball_speed_x, ball_speed_y)
+
+    # Check if the ball hits the left or right wall
+    if ball_x - ball_radius < 0 or ball_x + ball_radius > width:
+        ball_speed_x = -ball_speed_x
 
     # Check if the ball is inside the circle
-    dx = ball_x - circle_x
-    dy = ball_y - circle_y
-    distance = math.sqrt(dx ** 2 + dy ** 2)
-    if distance < circle_radius - ball_radius:
-        ball_speed_y = -ball_speed_y  # Bounce off the circle
+    ball_speed_y, ball_speed_x = bounce(ball_x, ball_y, ball_radius, circle_x, circle_y, circle_radius, ball_speed_x, ball_speed_y)
 
     # Clear the screen
     screen.fill(WHITE)
@@ -71,4 +83,4 @@ while running:
 
 # Quit pygame
 pygame.quit()
-sys.exit()
+sys.exit()()
