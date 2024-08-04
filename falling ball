@@ -38,7 +38,7 @@ while running:
     # Check if the ball hits the ground
     if ball_y >= height - ball_radius:
         ball_y = height - ball_radius
-        ball_speed_y = -ball_speed_y  # Reverse direction without energy loss
+        ball_speed_y = -ball_speed_y * 0.7  # Simulate bounce with energy loss
 
     # Clear the screen
     screen.fill(WHITE)
